@@ -77,4 +77,4 @@ M1 will send to WA group:
   - lib/firebase_options.dart
   - android/app/google-services.json
 
-Place them in the correct folders, then run flutter
+Put them in .gitignore file and place in correct folders, then run flutter
