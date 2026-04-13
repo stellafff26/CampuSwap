@@ -39,3 +39,42 @@ Payment Successful
   ├── Favourites List
   └── Data Visualization Dashboard
 ```
+# Setup Guide
+
+## Prerequisites
+- Flutter SDK installed 
+- VS Code Flutter & Dart extensions installed
+- Android Studio installed with Android emulator 
+
+### Create the Flutter project
+Open PowerShell in the folder where you want the project:
+```
+flutter create campuswap
+cd campuswap
+```
+
+### Install dependencies
+```
+flutter pub get
+```
+
+### Connect Flutter to Firebase
+```
+dart pub global activate flutterfire_cli
+flutterfire configure
+```
+
+### Run the app
+Start your Android emulator, then:
+```
+flutter run
+```
+
+
+## M2 & M3 
+
+M1 will send to WA group:
+  - lib/firebase_options.dart
+  - android/app/google-services.json
+
+Place them in the correct folders, then run flutter
