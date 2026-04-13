@@ -69,9 +69,3 @@ Start your Android emulator, then:
 ```
 flutter run
 ```
-
-
-## M2 & M3 
-Put them in campuswap/.gitignore file:
-  - lib/firebase_options.dart
-  - android/app/google-services.json
