@@ -72,9 +72,6 @@ flutter run
 
 
 ## M2 & M3 
-
-M1 will send to WA group:
+Put them in campuswap/.gitignore file:
   - lib/firebase_options.dart
   - android/app/google-services.json
-
-Put them in .gitignore file and place in correct folders, then run flutter
