@@ -8,7 +8,7 @@ class AuthService {
   User? get currentUser => _auth.currentUser;
 
   Future<String?> register({
-    required String name,
+    required String username,
     required String email,
     required String password,
     required String university,
@@ -20,7 +20,7 @@ class AuthService {
       );
       final uid = credential.user!.uid;
       await _db.collection('users').doc(uid).set({
-        'name': name.trim(),
+        'username': username.trim(),
         'email': email.trim(),
         'university': university,
         'createdAt': Timestamp.now(),
@@ -59,7 +59,7 @@ class AuthService {
   Future<String> getUserName() async {
     final uid = currentUser!.uid;
     final doc = await _db.collection('users').doc(uid).get();
-    return doc['name'] ?? '';
+    return doc['username'] ?? '';
   }
 
   Future<Map<String, dynamic>?> getUserData() async {

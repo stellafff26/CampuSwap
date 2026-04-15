@@ -75,7 +75,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
         category: _selectedCategory!,
         university: university,
         imageUrl: imageUrl,
-        sellerName: sellerName,
+        
       );
       if (!mounted) return;
       _showSnack('Product uploaded successfully!');

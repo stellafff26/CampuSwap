@@ -23,7 +23,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _selectedUniversity;
   bool _isLoading = false;
   bool _obscurePassword = true;
-  bool _isEmailValid = false; 
+  bool _isEmailValid = false;
+  bool _hasEmailText = false; // added
 
   final List<String> _universities = [
     'Universiti Malaya (UM)',
@@ -46,12 +47,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _validateEmail() {
     final email = _emailController.text;
-    final bool isValid = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
-    if (_isEmailValid != isValid) {
-      setState(() {
-        _isEmailValid = isValid;
-      });
-    }
+
+    final bool isValid =
+        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+
+    setState(() {
+      _isEmailValid = isValid;
+      _hasEmailText = email.isNotEmpty;
+    });
   }
 
   Future<void> _register() async {
@@ -73,20 +76,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final hasNumber = RegExp(r'[0-9]').hasMatch(password);
 
     if (password.length < 8 || !hasLetter || !hasNumber) {
-      _showSnack('Password must be at least 8 characters with letters and numbers');
+      _showSnack(
+          'Password must be at least 8 characters with letters and numbers');
       return;
     }
 
     setState(() => _isLoading = true);
+
     final error = await _authService.register(
-      name: _nameController.text,
+      username: _nameController.text,
       email: _emailController.text,
       password: password,
       university: _selectedUniversity!,
     );
+
     setState(() => _isLoading = false);
-    
+
     if (!mounted) return;
+
     if (error != null) {
       _showSnack(error);
     } else {
@@ -101,14 +108,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
         content: Text(msg),
         backgroundColor: AppColors.darkNavy,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
 
   @override
   void dispose() {
-    _emailController.removeListener(_validateEmail); 
+    _emailController.removeListener(_validateEmail);
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -127,7 +135,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               const SizedBox(height: 39),
               const Center(child: CampuSwapLogo(size: 100)),
-              const SizedBox(height: 20), 
+              const SizedBox(height: 20),
 
               const Text(
                 'Create account',
@@ -141,15 +149,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 4),
               const Text(
                 'Join your campus marketplace',
-                style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
+                style: TextStyle(
+                    fontSize: 14, color: AppColors.textSecondary),
               ),
               const SizedBox(height: 24),
 
-              // Name
+              // Username
               AppInput(
                 controller: _nameController,
-                label: 'Full Name',
-                hint: 'e.g. Angel Lim',
+                label: 'Username',
+                hint: 'e.g. angel04',
                 icon: Icons.person_outline_rounded,
               ),
               const SizedBox(height: 16),
@@ -161,10 +170,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 hint: 'your email',
                 icon: Icons.mail_outline_rounded,
                 keyboardType: TextInputType.emailAddress,
-                suffix: _emailController.text.isNotEmpty
+                suffix: _hasEmailText
                     ? Icon(
-                        _isEmailValid ? Icons.check_circle_rounded : Icons.error_outline_rounded,
-                        color: _isEmailValid ? Colors.green : Colors.red,
+                        _isEmailValid
+                            ? Icons.check_circle_rounded
+                            : Icons.error_outline_rounded,
+                        color:
+                            _isEmailValid ? Colors.green : Colors.red,
                         size: 20,
                       )
                     : null,
@@ -175,7 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               AppInput(
                 controller: _passwordController,
                 label: 'Password',
-                hint: 'min. 8 chars (letters & numbers)', 
+                hint: 'min. 8 chars (letters & numbers)',
                 icon: Icons.lock_outline_rounded,
                 obscure: _obscurePassword,
                 suffix: IconButton(
@@ -192,14 +204,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               const SizedBox(height: 16),
 
-              // University dropdown 
+              // University
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'UNIVERSITY',
                     style: TextStyle(
-                      fontSize: 12, 
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: AppColors.campuDark,
                       letterSpacing: 0.6,
@@ -210,7 +222,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     value: _selectedUniversity,
                     hint: const Text(
                       'Select your university',
-                      style: TextStyle(color: AppColors.textHint, fontSize: 14),
+                      style: TextStyle(
+                          color: AppColors.textHint, fontSize: 14),
                     ),
                     isExpanded: true,
                     icon: const Icon(Icons.keyboard_arrow_down_rounded,
@@ -221,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               value: u,
                               child: Text(u,
                                   style: const TextStyle(
-                                      fontSize: 14, 
+                                      fontSize: 14,
                                       color: AppColors.textPrimary)),
                             ))
                         .toList(),
@@ -230,11 +243,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: AppColors.inputBg,
-                      
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 15),
                       prefixIcon: Icon(
-                        Icons.school_outlined, 
+                        Icons.school_outlined,
                         size: 18,
                         color: AppColors.campuDark.withOpacity(0.45),
                       ),
@@ -271,13 +283,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               Center(
                 child: GestureDetector(
-                  onTap: () => Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen())),
+                  onTap: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const LoginScreen())),
                   child: RichText(
                     text: const TextSpan(
                       text: 'Already have an account? ',
                       style: TextStyle(
-                          color: AppColors.textSecondary, fontSize: 14),
+                          color: AppColors.textSecondary,
+                          fontSize: 14),
                       children: [
                         TextSpan(
                           text: 'Log in',
@@ -299,4 +314,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-

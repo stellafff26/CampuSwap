@@ -15,8 +15,15 @@ class FirestoreService {
     required String category,
     required String university,
     required String imageUrl,
-    required String sellerName,
+  
   }) async {
+    final userDoc = await _db.collection('users').doc(uid).get();
+    final userData = userDoc.data() as Map<String, dynamic>;
+    final username = userData['username'] ?? 'Unknown';
+
+
+
+
     await _db.collection('products').add({
       'title': title,
       'description': description,
@@ -25,7 +32,7 @@ class FirestoreService {
       'university': university,
       'imageUrl': imageUrl,
       'sellerId': uid,
-      'sellerName': sellerName,
+      'sellerName': username,
       'createdAt': Timestamp.now(),
     });
   }

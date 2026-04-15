@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../services/firestore_service.dart';
 import '../widgets/app_colors.dart';
 
 class DashboardScreen extends StatelessWidget {
