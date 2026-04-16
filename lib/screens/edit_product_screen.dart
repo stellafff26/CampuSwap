@@ -22,6 +22,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
   late TextEditingController priceController;
   late TextEditingController descController;
 
+  // ===== ADD 1: category variable =====
+  String? selectedCategory;
+
+  // ===== ADD 2: category list =====
+  final List<Map<String, dynamic>> categories = [
+    {'label': 'Electronics', 'icon': Icons.devices_outlined},
+    {'label': 'Books', 'icon': Icons.menu_book_outlined},
+    {'label': 'Clothes', 'icon': Icons.checkroom_outlined},
+    {'label': 'Furniture', 'icon': Icons.chair_outlined},
+    {'label': 'Sports & Fitness', 'icon': Icons.fitness_center_outlined},
+    {'label': 'Daily Essentials', 'icon': Icons.local_grocery_store_outlined},
+    {'label': 'Leisure & Hobbies', 'icon': Icons.toys_outlined},
+    {'label': 'Others', 'icon': Icons.category_outlined},
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +49,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
     descController =
         TextEditingController(text: widget.data['description']);
+
+    // ===== ADD 3: preload category =====
+    selectedCategory = widget.data['category'];
   }
 
   Future<void> updateProduct() async {
@@ -44,6 +62,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
       'title': titleController.text,
       'price': double.parse(priceController.text),
       'description': descController.text,
+
+      // ===== ADD 4: update category =====
+      'category': selectedCategory,
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -90,7 +111,68 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-            ), //  IMPORTANT COMMA HERE
+            ),
+
+            const SizedBox(height: 20),
+
+            // ===== ADD 5: CATEGORY UI =====
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Category",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: categories.map((cat) {
+                final isSelected = selectedCategory == cat['label'];
+
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedCategory = cat['label'];
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Colors.blue
+                          : Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          cat['icon'],
+                          size: 16,
+                          color: isSelected
+                              ? Colors.white
+                              : Colors.black54,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          cat['label'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
 
             const SizedBox(height: 20),
 
